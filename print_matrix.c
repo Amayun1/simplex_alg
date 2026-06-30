@@ -1,0 +1,65 @@
+/*
+
+Functions for printing some matrices.
+
+*/
+
+void print_float_matrix(int m, int n, double *matrix){
+   //prints matrix in row major order with m rows and n columns.
+   for(int row = 0; row < m; row++){
+      for(int column = 0; column < n; column++){
+         printf("%10.6f", matrix[row * n + column]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+   return;
+}
+
+void print_bool_matrix(int m, int n, bool *matrix){
+   //prints matrix in row major order with m rows and n columns.
+   for(int row = 0; row < m; row++){
+      for(int column = 0; column < n; column++){
+         printf("%10d", matrix[row * n + column]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+   return;
+}
+
+void print_int_matrix(int m, int n, int *matrix){
+   //prints matrix in row major order with m rows and n columns.
+   for(int row = 0; row < m; row++){
+      for(int column = 0; column < n; column++){
+         printf("%10d", matrix[row * n + column]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+   return;
+}
+
+void print_long_matrix(int m, int n, long *matrix){
+   //prints matrix in row major order with m rows and n columns.
+   for(int row = 0; row < m; row++){
+      for(int column = 0; column < n; column++){
+         printf("%10ld", matrix[row * n + column]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+   return;
+}
+
+void print_longlong_matrix(int m, int n, long long *matrix){
+   //prints matrix in row major order with m rows and n columns.
+   for(int row = 0; row < m; row++){
+      for(int column = 0; column < n; column++){
+         printf("%10lld", matrix[row * n + column]);
+      }
+      printf("\n");
+   }
+   printf("\n");
+   return;
+}
