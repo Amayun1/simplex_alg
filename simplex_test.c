@@ -20,7 +20,7 @@ int main (void){
    // set up timing
    struct timespec start, end;
 
-   // Test problem from GrivDNRM2a, Nash, Sofer (2009). See pages 132-133.
+   // Test problem from Griva, Nash, Sofer (2009). See pages 132-133.
    lapack_int m = 3;
    lapack_int n = 5;
 
