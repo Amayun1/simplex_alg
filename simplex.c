@@ -8,8 +8,6 @@ Requires linking lpacke and cblas to use:
 
 Author: Charles Panigeo
 Date Created: 6/24/2026
-Late Modifed: 6/29/2026
-
 */
 
 #include "simplex.h"
