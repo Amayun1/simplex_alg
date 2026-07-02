@@ -63,3 +63,19 @@ void print_longlong_matrix(int m, int n, long long *matrix){
    printf("\n");
    return;
 }
+
+// combine the above into one boiler-plate print matrix function. Only available in C11 or higher due to _Generic
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+
+#define print_matrix(m, n, matrix) _Generic((matrix),	\
+   int*		: print_int_matrix,		\
+   long*	: print_long_matrix,		\
+   long long*	: print_longlong_matrix,	\
+   float*	: print_float_matrix,		\
+   double*	: print_float_matrix,		\
+   bool*	: print_bool_matrix,		\
+   default	: printf("Error! Tried to print a matrix of unknown type. See print_matrix.c for compatable types.\n") \
+)( (m), (n), (matrix) )
+
+#endif
+

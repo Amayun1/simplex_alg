@@ -36,9 +36,9 @@ int main (void){
    // call simplex_phase_one to get a starting bfs for simplex method.
    sf_simplex_phase_one(m, n, A, b, bfs, BFS_indices);
    printf("Calculated BFS = \n");
-   print_float_matrix(n, 1, bfs);
+   print_matrix(n, 1, bfs);
    printf("BFS indices = \n");
-   print_bool_matrix(n, 1, BFS_indices);
+   print_matrix(n, 1, BFS_indices);
 
    timespec_get(&start, TIME_UTC); // start timer.
 
@@ -52,7 +52,7 @@ int main (void){
 
    // print calculated solution.
    printf("x = \n");
-   print_float_matrix(n, 1, bfs);
+   print_matrix(n, 1, bfs);
 
    printf("Objective value c^Tx = %f\n", obj);
 

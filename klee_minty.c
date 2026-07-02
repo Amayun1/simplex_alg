@@ -87,7 +87,7 @@ int main (void){
    printf("EZ simplex finished in %f s.\n", time_spent);
 
    printf("minimum x = \n");
-   print_float_matrix(n, 1, x);
+   print_matrix(n, 1, x);
 
    printf("Objective value c^Tx = %f\n", obj);
 
