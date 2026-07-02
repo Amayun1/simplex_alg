@@ -704,6 +704,8 @@ Outputs:
       y[i] = - y[i] + y[i + m];
    }
 
+   printf("Primal-dual gap = %f.\n", fabs(cblas_ddot(m, c, 1, x, 1) - cblas_ddot(n, rhs, 1, y, 1)));
+
    bool is_solution_flag;
    // test if c^Tx - b^Ty > tolerance.
    // The choice of tolerance is equite arbitrary, but if c and b are huge, I think this method is a more "fair" comparison.
@@ -724,6 +726,86 @@ Outputs:
    y = NULL;
    free(BFS_indices);
    BFS_indices = NULL;
+
+   return is_solution_flag;
+}
+
+// TODO write function to verify a linear program in EZ form by converting to standard form and invoking sf_verify_sol.
+
+bool ez_verify_sol(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, const double *x){
+/*
+Verifies if a given vector x is a solution to a linear program in EZ form
+   min c^Tx
+   s.t. Ax <= b
+   x >=0, b >=0.
+Converts the problem and the proposed optimal solution to standard form and calls sf_verify_sol.
+
+Inputs:
+   lapack_int m: Number of rows of the contraints matrix A and rhs b.
+   lapack_int n: Number of columns of A and the number of variables to optimize.
+   const double *c: Pointer to an array length n containing the weights of the objective function.
+   const double *A: Pointer to an array of length m*n for the constaint matrix. Must be in row major order.
+   const double *rhs: Pointer to an array of length m for the rhs of the constraints.
+   const double *x: Pointer to an array of length n where the proposed optimal solution is stored.
+Outputs:
+   bool return value: True if x is optimal, false if x is not optimal.
+*/
+
+   // Allocate memory for standard form matrix [A I] = temp_A
+   double *temp_A = malloc(m * (m + n) * sizeof(double));
+   if(temp_A == NULL){
+      printf("Memory allocation failed! Aborting function %s.\n", __func__);
+      exit(EXIT_FAILURE);
+   }
+
+   // Copy in A into temp_A
+   for(int rows = 0; rows < m; rows++){
+      for(int cols = 0; cols < n; cols++){
+         temp_A[rows * (n + m) + cols] = A[rows * n + cols];
+      }
+   }
+
+   // Copy I into [A I]
+   for(int rows = 0; rows < m; rows++){
+      for(int cols = 0; cols < m; cols++){
+         if(rows == cols){
+            temp_A[(n + m) * rows + n + cols] = 1;
+         }
+         else{
+            temp_A[(n + m) * rows + n + cols] = 0;
+         }
+      }
+   }
+
+   // allocate memory for new objective function and modifed minimum.
+   double *temp_c = calloc(m + n, sizeof(double));
+   if(temp_c == NULL){
+      printf("Memory allocation failed! Aborting function %s.\n", __func__);
+      exit(EXIT_FAILURE);
+   }
+
+   double *y = calloc(n + m, sizeof(double));
+   if(y == NULL){
+      printf("Memory allocation failed! Aborting function %s. \n", __func__);
+      exit(EXIT_FAILURE);
+   }
+
+   // copy in values for both temp_c and y.
+   for(int i = 0; i < n; i++){
+      temp_c[i] = c[i];
+      y[i] = x[i];
+   }
+
+   // call sf_verify_sol
+   bool is_solution_flag = sf_verify_sol(m, m + n, temp_c, temp_A, rhs, y);
+
+   // free allocated memory and clean dangling pointers
+   free(temp_A);
+   temp_A = NULL;
+   free(temp_c);
+   temp_c = NULL;
+   free(y);
+   y = NULL;
 
    return is_solution_flag;
 }

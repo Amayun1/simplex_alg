@@ -1,5 +1,3 @@
-// TODO fix klee_minty with new syntax?
-
 /*
 Test program for the ez simplex method for linear programs in easy form.
 Input is a linear program of the form
@@ -13,9 +11,9 @@ https://en.wikipedia.org/wiki/Klee%E2%80%93Minty_cube
 
 */
 
-#define DIMENSIONS 10 // Number of dimensions for the cube.
+#define DIMENSIONS 5 // Number of dimensions for the cube.
 
-//Override max simplex iters.
+//Override max simplex iters to how many the Klee Minty cube needs.
 #define MAX_SIMPLEX_ITERS (1UL << (DIMENSIONS))
 
 
@@ -47,8 +45,8 @@ int main (void){
 
    // Create the objective function
    double c[n];
-   for(int i = 1; i <= n; i++){
-      c[i] = - (double) pows_of_2[n - i];
+   for(int i = 0; i < n; i++){
+      c[i] = - (double) pows_of_2[n - i - 1];
    }
    // Create rhs of contstraints
    double b[n];
@@ -85,7 +83,7 @@ int main (void){
    timespec_get(&end, TIME_UTC); // end timer.
 
    // calculate time in ms
-   double time_spent = (end.tv_sec - start.tv_sec) * + (end.tv_nsec - start.tv_nsec)/(1E+09);
+   double time_spent = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec)/(1E+09);
    printf("EZ simplex finished in %f s.\n", time_spent);
 
    printf("minimum x = \n");
@@ -94,6 +92,12 @@ int main (void){
    printf("Objective value c^Tx = %f\n", obj);
 
    printf("Verifying solution is optimal. \n");
+   if(ez_verify_sol(m, n, c, A, b, x)){
+      printf("Solution verified as optimal!\n");
+   }
+   else{
+      printf("Oops! Something went wrong. The calculated solution isn't optimal.\n");
+   }
 
    return 0;
 }

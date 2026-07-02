@@ -46,5 +46,14 @@ int main (void){
 
    printf("Objective value c^Tx = %f\n", obj);
 
+   printf("Verifying solution.\n");
+
+   if(ez_verify_sol(m, n, c, A, b, x)){
+      printf("Solution verified as optimal!\n");
+   }
+   else{
+      printf("Oops! Something went wrong. The calculated solution isn't optimal.\n");
+   }
+
    return 0;
 }
