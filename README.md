@@ -16,3 +16,5 @@ The project may also solve linear programs with constraints of the form $Ax \leq
 
 The main algorithm functions are in [`simplex.c`](simplex.c). Files [`simplex_test.c`](simplex_test.c), [`ez_simplex_test.c`](ez_simplex_test.c), and [`klee_minty.c`](klee_minty.c) contain tests programs for the algorithm.
 
+For an overview on the simplex algorithm see <https://en.wikipedia.org/wiki/Simplex_algorithm>.
+For further details on the simplex algorithm and general optimization, see [*Linear and Nonlinear Optimization*](https://epubs.siam.org/doi/book/10.1137/1.9780898717730) by Griva, Nash, and Sofer or another suitable optimization reference.
