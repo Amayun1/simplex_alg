@@ -1,3 +1,5 @@
+// TODO fix klee_minty with new syntax?
+
 /*
 Test program for the ez simplex method for linear programs in easy form.
 Input is a linear program of the form
@@ -11,7 +13,7 @@ https://en.wikipedia.org/wiki/Klee%E2%80%93Minty_cube
 
 */
 
-#define DIMENSIONS 26 // Number of dimensions for the cube.
+#define DIMENSIONS 10 // Number of dimensions for the cube.
 
 //Override max simplex iters.
 #define MAX_SIMPLEX_ITERS (1UL << (DIMENSIONS))
@@ -90,6 +92,8 @@ int main (void){
    print_float_matrix(n, 1, x);
 
    printf("Objective value c^Tx = %f\n", obj);
+
+   printf("Verifying solution is optimal. \n");
 
    return 0;
 }

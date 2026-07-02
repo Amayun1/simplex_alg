@@ -12,6 +12,8 @@ where b >= 0 and A is of full row-rank.
 #include "simplex.h"
 #include "simplex.c"
 
+#include "print_matrix.c"
+
 // Include time library for timing how long code takes to execute.
 #include <time.h>
 

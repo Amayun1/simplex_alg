@@ -22,10 +22,11 @@ Header file for simplex algorithm library written in C.
 #endif
 
 // Function Prototypes here
-double sf_simplex(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, volatile double *bfs);
-void sf_simplex_phase_one(lapack_int m, lapack_int n, const double *A, const double *rhs, volatile double *bfs);
+double sf_simplex(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, volatile double *bfs, volatile bool *BFS_indices);
+void sf_simplex_phase_one(lapack_int m, lapack_int n, const double *A, const double *rhs, volatile double *bfs, volatile bool *BFS_indices);
 double ez_simplex(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, volatile double *x);
 void print_float_matrix(int m, int n, double *matrix);
 void print_bool_matrix(int m, int n, bool *matrix);
 void print_int_matrix(int m, int n, int *matrix);
-bool is_basic(int m, int n, const double *matrix, const double *rhs, const double *bfs);
+bool is_basic(int m, int n, const double *A, const double *rhs, const double *bfs);
+bool sf_verify_sol(int m, int n, const double *c, const double *A, const double *rhs, const double *x);
