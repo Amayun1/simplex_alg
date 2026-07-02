@@ -597,9 +597,9 @@ Verifies if a given vector x is a solution to a linear program in standard form
    s.t. Ax = b
    x >=0, b >=0.
 The function solves the dual linear program
-   min -b^Ty
-   s.t. A^Ty >= -c
-and checks if c^Tx = -b^Ty. The dual LP is converted to standard form to call sf_simplex.
+   max b^Ty
+   s.t. A^Ty <= c
+and checks if c^Tx = b^Ty. The dual LP is converted to standard form to call sf_simplex.
 
 Inputs:
    lapack_int m: Number of rows of the contraints matrix A and rhs b.
@@ -625,34 +625,35 @@ Outputs:
       exit(EXIT_FAILURE);
    }
 
-   // construct temp_c. Need to multiply each entry by it's sign so RHS of A^Ty = -c is nonnegative
+   // construct temp_c, taking absolute values so the RHS of temp_A^Ty = c is nonnegative.
    // also add more zeroes so it is of the full m + m + n length.
    for(int i = 0; i < n; i++){
       temp_c[i] = fabs(c[i]);
    }
 
    // construct contraints matrix for the dual LP in standard form.
-   // [A^T -A^T -I] with jth row multiplied by sign(c_j) as necessary.
+   // we replace each variable y_i = y_i' - y_i'' so we can have nonnegativity contraints on each variable.
+   // [A^T -A^T I] with jth row multiplied by sign(c_j) as necessary.
    for(int rows = 0; rows < n; rows++){
       for(int cols = 0; cols < m; cols++){
          //need to check if c[rows] is negative to see if we need to multiply the row by -1.
-         if(-c[rows] >= 0){
+         if(c[rows] >= 0){
             temp_A_trans[rows * (m + m + n) + cols] = A[n * cols + rows]; // copy in A^T
             temp_A_trans[rows * (m + m + n) + m + cols] = -A[n * cols + rows]; // copy in -A^T
          }
          else{
-            temp_A_trans[rows * (m + m + n) + cols] = -A[n * cols + rows]; // copy in A^T
-            temp_A_trans[rows * (m + m + n) + m + cols] = A[n * cols + rows]; // copy in -A^T
+            temp_A_trans[rows * (m + m + n) + cols] = -A[n * cols + rows]; // copy in -A^T
+            temp_A_trans[rows * (m + m + n) + m + cols] = A[n * cols + rows]; // copy in A^T
          }
       }
       for(int cols = 0; cols < n; cols++){
          // copy in -I (with row multiplied by -1 if -c[rows] is negative if necessary)
          if(rows == cols){
-            if(-c[rows] >=0){
-               temp_A_trans[rows * (m + m + n) + m + m + cols] = -1;
+            if(c[rows] >=0){
+               temp_A_trans[rows * (m + m + n) + m + m + cols] = 1;
             }
             else{
-               temp_A_trans[rows * (m + m + n) + m + m + cols] = 1;
+               temp_A_trans[rows * (m + m + n) + m + m + cols] = -1;
             }
          }
          else{
@@ -679,7 +680,8 @@ Outputs:
    sf_simplex_phase_one(n, m + m + n, temp_A_trans, temp_c, y, BFS_indices);
 
    // allocate memory for new objective function since there are now m + n more variables in it.
-   double *new_obj = malloc((m + m + n) * sizeof(double));
+   // also multiply by -1 to convert max into min for standard form.
+   double *new_obj = calloc(m + m + n, sizeof(double));
    if(new_obj == NULL){
       printf("Memory allocation failed! Aborting function %s.\n", __func__);
       exit(EXIT_FAILURE);
@@ -687,11 +689,8 @@ Outputs:
 
    // new objective function
    for(int i = 0; i < m; i++){
-      new_obj[i] = rhs[i];
-      new_obj[i + m] = - rhs[i];
-   }
-   for(int i = 0; i < n; i++){
-      new_obj[m + m + i] = 0;
+      new_obj[i] = -rhs[i];
+      new_obj[i + m] = rhs[i];
    }
 
    // call sf_simplex to solve the modified dual LP
@@ -700,17 +699,17 @@ Outputs:
    // convert the modified y back into the solution for the original dual LP.
    // stores this back in to the same array so we don't need to allocate another array.
    // The entries beyond the first n are now garbage, but we never access them again so this is okay.
-   for(int i = 0; i < n; i++){
-      y[i] = - y[i] + y[i + m];
+   for(int i = 0; i < m; i++){
+      y[i] = y[i] - y[i + m];
    }
 
-   printf("Primal-dual gap = %f.\n", fabs(cblas_ddot(m, c, 1, x, 1) - cblas_ddot(n, rhs, 1, y, 1)));
+   printf("Primal-dual gap = %f.\n", fabs(cblas_ddot(n, c, 1, x, 1) - cblas_ddot(m, rhs, 1, y, 1)));
 
    bool is_solution_flag;
    // test if c^Tx - b^Ty > tolerance.
    // The choice of tolerance is equite arbitrary, but if c and b are huge, I think this method is a more "fair" comparison.
-   if(fabs(cblas_ddot(m, c, 1, x, 1) - cblas_ddot(n, rhs, 1, y, 1))
-       < 1E-06 * (cblas_dnrm2(m, c, 1) + cblas_dnrm2(n, rhs, 1)) / 2){
+   if(fabs(cblas_ddot(n, c, 1, x, 1) - cblas_ddot(m, rhs, 1, y, 1))
+       < 1E-06 * (cblas_dnrm2(n, c, 1) + cblas_dnrm2(m, rhs, 1)) / 2){
       is_solution_flag = true;
    }
    else{
