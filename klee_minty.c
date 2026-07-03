@@ -11,11 +11,8 @@ https://en.wikipedia.org/wiki/Klee%E2%80%93Minty_cube
 
 */
 
-#define DIMENSIONS 5 // Number of dimensions for the cube.
-
 //Override max simplex iters to how many the Klee Minty cube needs.
-#define MAX_SIMPLEX_ITERS (1UL << (DIMENSIONS))
-
+#define MAX_SIMPLEX_ITERS (1UL << (25))
 
 // include simplex algorithm functions.
 #include "simplex.h"
@@ -28,17 +25,30 @@ https://en.wikipedia.org/wiki/Klee%E2%80%93Minty_cube
 
 int main (void){
 
-   printf("Setting up the linear program!\n");
+   //get user input for how many dimensions to create the cube.
+   int dimensions = 0;
 
-   lapack_int m = DIMENSIONS;
-   lapack_int n = DIMENSIONS;
+   printf("Enter number of dimensions for the cube (min 1, max 25).\n");
+   scanf("%d", &dimensions);
+
+   if(dimensions < 1 || dimensions > 25){
+      printf("Number of dimensions is invalid! Aborting program.\n");
+      exit(EXIT_FAILURE);
+   }
+
+   lapack_int m = dimensions;
+   lapack_int n = dimensions;
+
+   printf("Setting up the linear program!\n");
 
    // create a look-up table for pows of 2 and 5.
    // math.h doesn't work since it uses floating-point and Klee-Minty is very sensitive to the constraints.
 
-   long long pows_of_2[DIMENSIONS + 1] = {1};
-   long long pows_of_5[DIMENSIONS + 1] = {1};
-   for(int i = 1; i <= DIMENSIONS; i++){
+   long long pows_of_2[n + 1];
+   pows_of_2[0] = 1;
+   long long pows_of_5[n + 1];
+   pows_of_5[0] = 1;
+   for(int i = 1; i <= n; i++){
       pows_of_2[i] = 2 * pows_of_2[i - 1];
       pows_of_5[i] = 5 * pows_of_5[i - 1];
    }
