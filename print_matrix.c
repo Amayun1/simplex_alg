@@ -4,6 +4,8 @@ Functions for printing some matrices.
 
 */
 
+#include <stdio.h>
+
 void print_float_matrix(int m, int n, double *matrix){
    //prints matrix in row major order with m rows and n columns.
    for(int row = 0; row < m; row++){
@@ -63,8 +65,6 @@ void print_longlong_matrix(int m, int n, long long *matrix){
    printf("\n");
    return;
 }
-
-void print_error(int m, int m,)
 
 // combine the above into one boiler-plate print matrix function. Only available in C11 or higher due to _Generic
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
