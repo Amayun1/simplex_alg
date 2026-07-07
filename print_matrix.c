@@ -75,7 +75,7 @@ void print_error(int m, int m,)
    long long*	: print_longlong_matrix,	\
    float*	: print_float_matrix,		\
    double*	: print_float_matrix,		\
-   bool*	: print_bool_matrix,		\
+   bool*	: print_bool_matrix		\
 )( (m), (n), (matrix) )
 
 #endif

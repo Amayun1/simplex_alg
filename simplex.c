@@ -729,8 +729,6 @@ Outputs:
    return is_solution_flag;
 }
 
-// TODO write function to verify a linear program in EZ form by converting to standard form and invoking sf_verify_sol.
-
 bool ez_verify_sol(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, const double *x){
 /*
 Verifies if a given vector x is a solution to a linear program in EZ form
