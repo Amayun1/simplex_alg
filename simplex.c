@@ -12,7 +12,7 @@ Date Created: 6/24/2026
 
 #include "simplex.h"
 
-void sf_simplex_phase_one(lapack_int m, lapack_int n, const double *A, const double *rhs, volatile double *bfs, volatile bool *BFS_indices){
+void sf_simplex_phase_one(lapack_int m, lapack_int n, double *A, double *rhs, double *bfs, bool *BFS_indices){
 /*
 Calculcates an initial BFS of the linear program in standard form Ax = b using the phase-one method.
 
@@ -123,7 +123,7 @@ Outputs:
    return;
 }
 
-double sf_simplex(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, volatile double *bfs, volatile bool *BFS_indices){
+double sf_simplex(lapack_int m, lapack_int n, double *c, double *A, double *rhs, double *bfs, bool *BFS_indices){
 /*
 Program which implements the simplex method for linear programs in standard form.
 Input is a linear program of the form
@@ -448,7 +448,7 @@ Outputs:
    return cblas_ddot(n, bfs, 1, c, 1);
 }
 
-double ez_simplex(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, volatile double *x){
+double ez_simplex(lapack_int m, lapack_int n, double *c, double *A, double *rhs, double *x){
 /*
 Wrapper for sf_simplex.
 Solves a linear program of the form
@@ -555,7 +555,7 @@ Outputs:
    return objective;
 }
 
-bool is_basic(int m, int n, const double *A, const double *rhs, const double *bfs){
+bool is_basic(int m, int n, double *A, double *rhs, double *bfs){
    // Checks if bfs really is a basic solution to Ax = b, where A is an m * n matrix.
    // Returns true or false.
 
@@ -590,7 +590,7 @@ bool is_basic(int m, int n, const double *A, const double *rhs, const double *bf
    return is_basic_flag;
 }
 
-bool sf_verify_sol(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, const double *x){
+bool sf_verify_sol(lapack_int m, lapack_int n, double *c, double *A, double *rhs, double *x){
 /*
 Verifies if a given vector x is a solution to a linear program in standard form
    min c^Tx
@@ -729,7 +729,7 @@ Outputs:
    return is_solution_flag;
 }
 
-bool ez_verify_sol(lapack_int m, lapack_int n, const double *c, const double *A, const double *rhs, const double *x){
+bool ez_verify_sol(lapack_int m, lapack_int n, double *c, double *A, double *rhs, double *x){
 /*
 Verifies if a given vector x is a solution to a linear program in EZ form
    min c^Tx
